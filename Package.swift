@@ -16,15 +16,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        // Add any external dependencies here, for example:
-        // .package(url: "https://github.com/user/repo.git", from: "1.0.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", from: "0.62.2")
     ],
     targets: [
         .target(
             name: "QKnobs",
-            dependencies: [
-                // Add dependencies for this target here
-            ]
+            plugins: [.plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")]
         ),
     ]
 )

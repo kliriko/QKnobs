@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "575FF2642E85694E00E1C7E2"
-               BuildableName = "test app.app"
-               BlueprintName = "test app"
-               ReferencedContainer = "container:QKnobs.xcodeproj">
+               BlueprintIdentifier = "QKnobs"
+               BuildableName = "QKnobs"
+               BlueprintName = "QKnobs"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,16 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "575FF2642E85694E00E1C7E2"
-            BuildableName = "test app.app"
-            BlueprintName = "test app"
-            ReferencedContainer = "container:QKnobs.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -57,16 +47,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "575FF2642E85694E00E1C7E2"
-            BuildableName = "test app.app"
-            BlueprintName = "test app"
-            ReferencedContainer = "container:QKnobs.xcodeproj">
+            BlueprintIdentifier = "QKnobs"
+            BuildableName = "QKnobs"
+            BlueprintName = "QKnobs"
+            ReferencedContainer = "container:">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
