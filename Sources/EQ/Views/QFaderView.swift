@@ -7,52 +7,75 @@
 
 import SwiftUI
 
-/// A vertical fader control with optional snapping and customizable accessory UI.
-public struct QFader<Accessory: View>: View {
+public struct QFader: View {
+
     // MARK: - Properties
-    
+
     let snappingPoint: Double
     @StateObject private var vm: QFaderViewModel
-    
-    /// A closure that provides a custom accessory view.
-    /// For example, you can use this to add a snapping toggle button or label.
-    let accessory: (QFaderViewModel) -> Accessory
-    
-    /// Alignment for accessory overlay.
-    private let overlayAlignment: Alignment
 
-    // MARK: - Initializer
-    
-    /// Creates a new ``QFader``.
-    /// - Parameters:
-    ///   - enableSnapping: Whether snapping is enabled initially.
-    ///   - snappingPoint: Normalized snapping position (0...1).
-    ///   - overlayAlignment: Alignment for the accessory overlay.
-    ///   - accessory: Optional view builder providing a custom overlay or control.
+    // Optional overlays
+    private var accessory: ((QFaderViewModel) -> AnyView)?
+    private var accessoryAlignment: Alignment
+
+    private var minView: ((QFaderViewModel) -> AnyView)?
+    private var maxView: ((QFaderViewModel) -> AnyView)?
+    private var snapButtonView: ((QFaderViewModel) -> AnyView)?
+
+    // MARK: - Public Init
+
     public init(
         enableSnapping: Bool = true,
         snappingPoint: Double = 0.5,
-        overlayAlignment: Alignment = .center,
-        @ViewBuilder accessory: @escaping (QFaderViewModel) -> Accessory = { _ in EmptyView() }
+        minValue: Double = 0.0,
+        maxValue: Double = 1.0
     ) {
         self.snappingPoint = snappingPoint
-        _vm = StateObject(wrappedValue: QFaderViewModel(enableSnapping: enableSnapping, snappingPoint: snappingPoint))
-        self.accessory = accessory
-        self.overlayAlignment = overlayAlignment
+        _vm = StateObject(wrappedValue: QFaderViewModel(
+            enableSnapping: enableSnapping,
+            snappingPoint: snappingPoint,
+            minValue: minValue,
+            maxValue: maxValue
+        ))
+        self.accessory = nil
+        self.accessoryAlignment = .center
+        self.minView = nil
+        self.maxView = nil
+        self.snapButtonView = nil
     }
-    
+
+    // MARK: - Private Chaining Init
+
+    private init(
+        snappingPoint: Double,
+        vm: StateObject<QFaderViewModel>,
+        accessory: ((QFaderViewModel) -> AnyView)?,
+        accessoryAlignment: Alignment,
+        minView: ((QFaderViewModel) -> AnyView)?,
+        maxView: ((QFaderViewModel) -> AnyView)?,
+        snapButtonView: ((QFaderViewModel) -> AnyView)?
+    ) {
+        self.snappingPoint = snappingPoint
+        self._vm = vm
+        self.accessory = accessory
+        self.accessoryAlignment = accessoryAlignment
+        self.minView = minView
+        self.maxView = maxView
+        self.snapButtonView = snapButtonView
+    }
+
     // MARK: - Body
-    
+
     public var body: some View {
         GeometryReader { geo in
             ZStack {
-                // Track
+                // Track line
                 Rectangle()
                     .fill(Color.gray)
                     .frame(width: 3)
                     .frame(maxHeight: .infinity)
-                
-                // --- Snapping Point Indicator Line ---
+
+                // Snap indicator
                 let snapY = (1 - snappingPoint) * (2 * vm.trackHeight) - vm.trackHeight
                 Rectangle()
                     .fill(vm.enableSnapping ? Color.gray.opacity(0.5) : Color.gray.opacity(0.3))
@@ -60,7 +83,7 @@ public struct QFader<Accessory: View>: View {
                     .frame(maxWidth: .infinity)
                     .offset(y: snapY)
                     .allowsHitTesting(false)
-                
+
                 // Handle
                 Rectangle()
                     .fill(Color.blue)
@@ -74,31 +97,104 @@ public struct QFader<Accessory: View>: View {
                     .offset(y: vm.offsetY)
                     .gesture(
                         DragGesture()
-                            .onChanged { value in
-                                vm.handleDragGesture(value: value)
-                            }
-                            .onEnded { _ in
-                                vm.handleDragEnd()
-                            }
-                        
-                        
+                            .onChanged { vm.handleDragGesture(value: $0) }
+                            .onEnded { _ in vm.handleDragEnd() }
                     )
                     .simultaneousGesture(
-                        TapGesture(count: 2)
-                            .onEnded {
-                                vm.returnToSnappingPoint()
-                            }
+                        TapGesture(count: 2).onEnded { vm.returnToSnappingPoint() }
                     )
                     .animation(.easeInOut(duration: 0.2), value: vm.offsetY)
+
+                // -------------------------------
+                // EXACT POSITION MIN/MAX/SNAP UI
+                // -------------------------------
+
+                if let minView = minView {
+                    minView(vm)
+                        .offset(y: vm.trackHeight)
+                }
+
+                if let maxView = maxView {
+                    maxView(vm)
+                        .offset(y: -vm.trackHeight)
+                }
+
+                if let snapBtn = snapButtonView {
+                    snapBtn(vm)
+                        .offset(y: snapY)
+                }
             }
-            .overlay(alignment: overlayAlignment) {
-                accessory(vm)
+            .overlay(alignment: accessoryAlignment) {
+                if let accessory = accessory {
+                    accessory(vm)
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onChange(of: geo.size) { _, new in
-                vm.trackHeight = geo.size.height / 2 - vm.handleHeight / 2
+                vm.trackHeight = new.height / 2 - vm.handleHeight / 2
+                vm.returnToSnappingPoint()
             }
             .sensoryFeedback(.success, trigger: vm.snapFeedback)
         }
+    }
+}
+
+// MARK: - View Modifiers
+
+public extension QFader {
+    func accessoryView<Content: View>(
+        alignment: Alignment = .center,
+        @ViewBuilder _ content: @escaping (QFaderViewModel) -> Content
+    ) -> QFader {
+        .init(
+            snappingPoint: snappingPoint,
+            vm: _vm,
+            accessory: { AnyView(content($0)) },
+            accessoryAlignment: alignment,
+            minView: minView,
+            maxView: maxView,
+            snapButtonView: snapButtonView
+        )
+    }
+
+    func minView<MinV: View>(
+        @ViewBuilder _ content: @escaping (QFaderViewModel) -> MinV
+    ) -> QFader {
+        .init(
+            snappingPoint: snappingPoint,
+            vm: _vm,
+            accessory: accessory,
+            accessoryAlignment: accessoryAlignment,
+            minView: { AnyView(content($0)) },
+            maxView: maxView,
+            snapButtonView: snapButtonView
+        )
+    }
+
+    func maxView<MaxV: View>(
+        @ViewBuilder _ content: @escaping (QFaderViewModel) -> MaxV
+    ) -> QFader {
+        .init(
+            snappingPoint: snappingPoint,
+            vm: _vm,
+            accessory: accessory,
+            accessoryAlignment: accessoryAlignment,
+            minView: minView,
+            maxView: { AnyView(content($0)) },
+            snapButtonView: snapButtonView
+        )
+    }
+
+    func faderSnapButton<Content: View>(
+        @ViewBuilder _ content: @escaping (QFaderViewModel) -> Content
+    ) -> QFader {
+        .init(
+            snappingPoint: snappingPoint,
+            vm: _vm,
+            accessory: accessory,
+            accessoryAlignment: accessoryAlignment,
+            minView: minView,
+            maxView: maxView,
+            snapButtonView: { AnyView(content($0)) }
+        )
     }
 }

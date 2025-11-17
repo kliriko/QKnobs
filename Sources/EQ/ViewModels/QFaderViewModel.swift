@@ -24,6 +24,11 @@ public final class QFaderViewModel: ObservableObject {
     /// This is what tells us the fader's current value. Is in range 0...1.
     @Published public var relativePosition: Double = 0.5
     
+    /// Absolute value based on min and max range
+    public var absoluteValue: Double {
+        minValue + (relativePosition * (maxValue - minValue))
+    }
+    
     /// Determines if fader should snap to its default position.
     @Published public var enableSnapping: Bool
     
@@ -32,12 +37,20 @@ public final class QFaderViewModel: ObservableObject {
     // MARK: - Dimensions
     
     /// Actual width of the fader rectangle.
-    internal var handleWidth: CGFloat = 30
+    var handleWidth: CGFloat = 30
     
     /// Actual height of the fader rectangle.
-    internal var handleHeight: CGFloat = 50
+    var handleHeight: CGFloat = 50
     
-    internal var trackHeight: CGFloat = 100
+    public var trackHeight: CGFloat = 100
+    
+    // MARK: - Value Range
+    
+    /// Minimum value of the fader range
+    public let minValue: Double
+    
+    /// Maximum value of the fader range
+    public let maxValue: Double
     
     // MARK: - Private properties
     
@@ -59,21 +72,29 @@ public final class QFaderViewModel: ObservableObject {
     ///   - enableSnapping: Whether snapping is enabled.
     ///   - snappingPoint: Normalized position to snap to.
     ///   - snappingThreshold: Range around the snapping point to trigger snapping.
-    public init(enableSnapping: Bool, snappingPoint: Double, snappingThreshold: Double = 0.05) {
+    ///   - minValue: Minimum value of the fader range.
+    ///   - maxValue: Maximum value of the fader range.
+    public init(
+        enableSnapping: Bool,
+        snappingPoint: Double,
+        snappingThreshold: Double = 0.05,
+        minValue: Double = 0.0,
+        maxValue: Double = 1.0
+    ) {
         self.enableSnapping = enableSnapping
         self.snappingPoint = snappingPoint
         self.snappingThreshold = snappingThreshold
+        self.minValue = minValue
+        self.maxValue = maxValue
         self.relativePosition = snappingPoint
         
         returnToSnappingPoint()
     }
 
     // MARK: - Gesture Handlers
-    
     /// Executes when drag occurs in ``QFader``.
     /// - Parameters:
     ///   - value: Return of `DragGesture`.
-    ///   - travelLimit: Limitation for fader movement.
     public func handleDragGesture(value: DragGesture.Value) {
         let newOffset = lastOffsetY + value.translation.height
         
@@ -87,8 +108,6 @@ public final class QFaderViewModel: ObservableObject {
     }
 
     /// Executes when drag ends in ``QFader``.
-    /// - Parameters:
-    ///   - travelLimit: Limitation for fader movement.
     public func handleDragEnd() {
         lastOffsetY = offsetY
         
@@ -109,8 +128,6 @@ public final class QFaderViewModel: ObservableObject {
             triggerHapticFeedback()
             
             snapFeedback.toggle()
-            print(snapFeedback)
-            print("Snapped to \(snappingPoint)")
         }
     }
     
@@ -127,18 +144,16 @@ public final class QFaderViewModel: ObservableObject {
     }
     
     // MARK: - Haptic Feedback
-    
     /// Triggers platform-appropriate haptic feedback
     private func triggerHapticFeedback() {
-            #if os(macOS)
-            // Double impact for stronger initial feedback
+        #if os(macOS)
+        NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
             NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
-                NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
-            }
-            #elseif os(iOS)
-            let generator = UIImpactFeedbackGenerator(style: .heavy)
-            generator.impactOccurred()
-            #endif
         }
+        #elseif os(iOS)
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
+        #endif
+    }
 }

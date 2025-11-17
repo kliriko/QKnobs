@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "QKnobs",
     platforms: [
-        .iOS(.v26),      // Adjust to your minimum iOS version
-        .macOS(.v26),    // Adjust to your minimum macOS version
+        .iOS(.v26),
+        .macOS(.v26),    
     ],
     products: [
         .library(
