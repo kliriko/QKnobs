@@ -15,10 +15,6 @@ import AppKit
 /// ViewModel for the ``QFader``.
 /// Handles drag gestures, snapping logic, and maintains normalized position.
 public final class QFaderViewModel: ObservableObject, QFaderProtocol {
-    public func getAbsoluteValue() -> Double {
-        return 0
-    }
-    
     @Published public var active: Bool = true
     
     public var feedbackEnabled: Bool = true
@@ -39,7 +35,12 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
     
     /// Absolute value based on min and max range
     public var absoluteValue: Double {
-        minValue + (currentValue * (maxValue - minValue))
+        get {
+            minValue + (currentValue * (maxValue - minValue))
+        }
+        set {
+            currentValue = ((newValue - minValue) / (maxValue - minValue)).clamped(to: 0...1)
+        }
     }
     // MARK: - Dimensions
     

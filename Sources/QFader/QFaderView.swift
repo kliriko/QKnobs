@@ -13,7 +13,7 @@ public struct QFaderView: View {
     let snappingPoint: Double
     @StateObject private var viewModel: QFaderViewModel
 
-    // Optional overlays
+    // TODO: REWORK
     private var accessory: ((QFaderViewModel) -> AnyView)?
     private var accessoryAlignment: Alignment
 
@@ -99,10 +99,6 @@ public struct QFaderView: View {
                         TapGesture(count: 2).onEnded { viewModel.returnToSnappingPoint() }
                     )
                     .animation(.easeInOut(duration: 0.2), value: viewModel.offsetY)
-
-                // -------------------------------
-                // EXACT POSITION MIN/MAX/SNAP UI
-                // -------------------------------
 
                 if let minView = minView {
                     minView(viewModel)

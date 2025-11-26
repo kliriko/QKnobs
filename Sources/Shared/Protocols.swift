@@ -7,6 +7,12 @@
 
 import Foundation
 
+/* План
+ 1. радіальна крутилка яка перемикається по засічкам. тобто чітко 1 2 3 і так далі
+ 2. можливість замінити вигляд крутилки та фейдеру
+ 3. клас який обʼєднує кнопки і крутилки в одне.
+ */
+
 /// All values are relative from 0 to 1.
 public protocol QControl {
     var active: Bool { get set}
@@ -16,12 +22,12 @@ public protocol QControl {
     var minValue: Double { get }
     var maxValue: Double { get }
     
-    var snapEnabled: Bool { get }
+    var snapEnabled: Bool { get set }
     var snapValue: Double { get }
     var snapThreshold: Double { get }
     var feedbackEnabled: Bool { get }
     
-    func getAbsoluteValue() -> Double
+    var absoluteValue: Double { get set }
 }
 
 public protocol QRadialKnobProtocol: QControl {
