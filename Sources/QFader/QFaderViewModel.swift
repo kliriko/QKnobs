@@ -14,7 +14,15 @@ import AppKit
 
 /// ViewModel for the ``QFader``.
 /// Handles drag gestures, snapping logic, and maintains normalized position.
-public final class QFaderViewModel: ObservableObject {
+public final class QFaderViewModel: ObservableObject, QFaderProtocol {
+    public func getAbsoluteValue() -> Double {
+        return 0
+    }
+    
+    @Published public var active: Bool = true
+    
+    public var feedbackEnabled: Bool = true
+    
     // MARK: - Published variables
     
     /// Moves the fader on UI.
@@ -22,18 +30,17 @@ public final class QFaderViewModel: ObservableObject {
     
     /// Relative fader position.
     /// This is what tells us the fader's current value. Is in range 0...1.
-    @Published public var relativePosition: Double = 0.5
+    @Published public var currentValue: Double = 0.5
+    
+    /// Determines if fader should snap to its default position.
+    @Published public var snapEnabled: Bool
+    
+    @Published public var defaultValue: Double = 0.5
     
     /// Absolute value based on min and max range
     public var absoluteValue: Double {
-        minValue + (relativePosition * (maxValue - minValue))
+        minValue + (currentValue * (maxValue - minValue))
     }
-    
-    /// Determines if fader should snap to its default position.
-    @Published public var enableSnapping: Bool
-    
-    @Published internal var snapFeedback: Bool = false
-    
     // MARK: - Dimensions
     
     /// Actual width of the fader rectangle.
@@ -58,12 +65,12 @@ public final class QFaderViewModel: ObservableObject {
     private var lastOffsetY: CGFloat = 0.0
     
     /// Fader's position to snap towards. Is in range 0...1.
-    private let snappingPoint: Double
+    public let snapValue: Double
     
     /// Threshold within which the snap occurs.
     /// > Tip: If the snap value is 0.5 and threshold is 0.05,
     /// > the snap will occur within range 0.45...0.55.
-    private let snappingThreshold: Double
+    public var snapThreshold: Double
 
     // MARK: - Initializers
     
@@ -81,12 +88,12 @@ public final class QFaderViewModel: ObservableObject {
         minValue: Double = 0.0,
         maxValue: Double = 1.0
     ) {
-        self.enableSnapping = enableSnapping
-        self.snappingPoint = snappingPoint
-        self.snappingThreshold = snappingThreshold
+        self.snapEnabled = enableSnapping
+        self.snapValue = snappingPoint
+        self.snapThreshold = snappingThreshold
         self.minValue = minValue
         self.maxValue = maxValue
-        self.relativePosition = snappingPoint
+        self.currentValue = snappingPoint
         
         returnToSnappingPoint()
     }
@@ -94,7 +101,7 @@ public final class QFaderViewModel: ObservableObject {
     // MARK: - Gesture Handlers
     /// Executes when drag occurs in ``QFader``.
     /// - Parameters:
-    ///   - value: Return of `DragGesture`.
+    ///   - currentValue: Return of `DragGesture`.
     public func handleDragGesture(value: DragGesture.Value) {
         let newOffset = lastOffsetY + value.translation.height
         
@@ -104,42 +111,42 @@ public final class QFaderViewModel: ObservableObject {
         offsetY = min(max(newOffset, minOffset), maxOffset)
         
         let normalized = (trackHeight - offsetY) / (2 * trackHeight)
-        relativePosition = Double(normalized)
+        currentValue = Double(normalized)
     }
 
     /// Executes when drag ends in ``QFader``.
     public func handleDragEnd() {
         lastOffsetY = offsetY
         
-        guard enableSnapping else { return }
+        guard snapEnabled else { return }
         
         // Compute how far we are from the snapping point
-        let distance = abs(relativePosition - snappingPoint)
+        let distance = abs(currentValue - snapValue)
         
-        if distance <= snappingThreshold {
+        if distance <= snapThreshold {
             // Snap to target position
-            relativePosition = snappingPoint
+            currentValue = snapValue
             
             // Convert normalized value back to offsetY
-            offsetY = CGFloat((1 - 2 * snappingPoint) * trackHeight)
+            offsetY = CGFloat((1 - 2 * snapValue) * trackHeight)
             lastOffsetY = offsetY
             
             // Trigger haptic feedback
             triggerHapticFeedback()
             
-            snapFeedback.toggle()
+            feedbackEnabled.toggle()
         }
     }
     
     /// Toggles snapping on or off.
     public func toggleSnapping() {
-        enableSnapping.toggle()
+        snapEnabled.toggle()
     }
     
     /// Returns the fader to the snapping point
     public func returnToSnappingPoint() {
-        relativePosition = snappingPoint
-        offsetY = CGFloat((1 - 2 * snappingPoint) * trackHeight)
+        currentValue = snapValue
+        offsetY = CGFloat((1 - 2 * snapValue) * trackHeight)
         lastOffsetY = offsetY
     }
     
