@@ -7,7 +7,7 @@ import SwiftUI
 
 public struct QRadialKnobView: View {
 
-    @StateObject private var viewModel = QRadialKnobViewModel()
+    @ObservedObject private var viewModel: QRadialKnobViewModel
 
     // Inject custom UI
     public var minView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
@@ -15,7 +15,9 @@ public struct QRadialKnobView: View {
     public var valueView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
     public var accessoryView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
 
-    public init() {}
+    public init(viewModel: QRadialKnobViewModel = QRadialKnobViewModel()) {
+        self.viewModel = viewModel
+    }
 
     public var body: some View {
         ZStack {
@@ -71,7 +73,6 @@ public struct QRadialKnobView: View {
 // MARK: - Modifiers
 
 public extension QRadialKnobView {
-
     func knobMinView<Content: View>(
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content
     ) -> Self {

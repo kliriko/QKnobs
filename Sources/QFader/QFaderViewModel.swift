@@ -15,6 +15,8 @@ import AppKit
 /// ViewModel for the ``QFader``.
 /// Handles drag gestures, snapping logic, and maintains normalized position.
 public final class QFaderViewModel: ObservableObject, QFaderProtocol {
+    public init() { }
+    
     @Published public var active: Bool = true
     
     public var feedbackEnabled: Bool = true
@@ -29,7 +31,7 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
     @Published public var currentValue: Double = 0.5
     
     /// Determines if fader should snap to its default position.
-    @Published public var snapEnabled: Bool
+    @Published public var snapEnabled: Bool = true
     
     @Published public var defaultValue: Double = 0.5
     
@@ -55,10 +57,10 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
     // MARK: - Value Range
     
     /// Minimum value of the fader range
-    public let minValue: Double
+    public let minValue: Double = -48
     
     /// Maximum value of the fader range
-    public let maxValue: Double
+    public let maxValue: Double = 6
     
     // MARK: - Private properties
     
@@ -66,38 +68,12 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
     private var lastOffsetY: CGFloat = 0.0
     
     /// Fader's position to snap towards. Is in range 0...1.
-    public let snapValue: Double
+    public let snapValue: Double = 0.5
     
     /// Threshold within which the snap occurs.
     /// > Tip: If the snap value is 0.5 and threshold is 0.05,
     /// > the snap will occur within range 0.45...0.55.
-    public var snapThreshold: Double
-
-    // MARK: - Initializers
-    
-    /// Initializes a new instance of ``QFaderViewModel``.
-    /// - Parameters:
-    ///   - enableSnapping: Whether snapping is enabled.
-    ///   - snappingPoint: Normalized position to snap to.
-    ///   - snappingThreshold: Range around the snapping point to trigger snapping.
-    ///   - minValue: Minimum value of the fader range.
-    ///   - maxValue: Maximum value of the fader range.
-    public init(
-        enableSnapping: Bool,
-        snappingPoint: Double,
-        snappingThreshold: Double = 0.05,
-        minValue: Double = 0.0,
-        maxValue: Double = 1.0
-    ) {
-        self.snapEnabled = enableSnapping
-        self.snapValue = snappingPoint
-        self.snapThreshold = snappingThreshold
-        self.minValue = minValue
-        self.maxValue = maxValue
-        self.currentValue = snappingPoint
-        
-        returnToSnappingPoint()
-    }
+    public var snapThreshold: Double = 0.05
 
     // MARK: - Gesture Handlers
     /// Executes when drag occurs in ``QFader``.
@@ -165,3 +141,4 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
         #endif
     }
 }
+
