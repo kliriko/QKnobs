@@ -8,13 +8,9 @@
 import SwiftUI
 import Combine
 
-#if os(macOS)
-import AppKit
-#endif
-
 /// ViewModel for the ``QFader``.
 /// Handles drag gestures, snapping logic, and maintains normalized position.
-public final class QFaderViewModel: ObservableObject, QFaderProtocol {
+public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol {
     public init() { }
     
     @Published public var active: Bool = true
@@ -22,7 +18,6 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
     public var feedbackEnabled: Bool = true
     
     // MARK: - Published variables
-    
     /// Moves the fader on UI.
     @Published public var offsetY: CGFloat = 0
     
@@ -108,9 +103,6 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
             offsetY = CGFloat((1 - 2 * snapValue) * trackHeight)
             lastOffsetY = offsetY
             
-            // Trigger haptic feedback
-            triggerHapticFeedback()
-            
             feedbackEnabled.toggle()
         }
     }
@@ -126,19 +118,4 @@ public final class QFaderViewModel: ObservableObject, QFaderProtocol {
         offsetY = CGFloat((1 - 2 * snapValue) * trackHeight)
         lastOffsetY = offsetY
     }
-    
-    // MARK: - Haptic Feedback
-    /// Triggers platform-appropriate haptic feedback
-    private func triggerHapticFeedback() {
-        #if os(macOS)
-        NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
-            NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
-        }
-        #elseif os(iOS)
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.impactOccurred()
-        #endif
-    }
 }
-

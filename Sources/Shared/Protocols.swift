@@ -5,6 +5,10 @@
 //  Created by Володимир on 25.11.2025.
 //
 
+// хочаб кілька скінів і можливість додавати свої
+// канал фейдера
+// подумати які параметри треба винести нагору
+
 import Foundation
 
 public struct QControl: Identifiable {
@@ -12,18 +16,14 @@ public struct QControl: Identifiable {
     var connectedControl: any QControlProtocol
 }
 
-/* План
- 1. радіальна крутилка яка перемикається по засічкам. тобто чітко 1 2 3 і так далі
- 2. можливість замінити вигляд крутилки та фейдеру
- 3. клас який обʼєднує кнопки і крутилки в одне.
- */
-
 /// All values are relative from 0 to 1.
 public protocol QControlProtocol {
     var active: Bool { get set}
     var currentValue: Double { get }
+}
+
+public protocol QContiniousControlProtocol: QControlProtocol {
     var defaultValue: Double { get }
-    
     var minValue: Double { get }
     var maxValue: Double { get }
     
@@ -35,7 +35,8 @@ public protocol QControlProtocol {
     var absoluteValue: Double { get set }
 }
 
-public protocol QRadialKnobProtocol: QControlProtocol {
+// MARK: -
+public protocol QRadialKnobProtocol: QContiniousControlProtocol {
     var minAngle: Double { get }
     var maxAngle: Double { get }
     var angle: Double { get }
@@ -52,6 +53,19 @@ extension QRadialKnobProtocol {
     }
 }
 
-public protocol QFaderProtocol: QControlProtocol {
+// MARK: -
+public protocol QDiscreteKnobProtocol: QControlProtocol {
+    associatedtype EnumType: CaseIterable, Equatable
     
+    var currentSelection: EnumType { get set }
+}
+
+extension QDiscreteKnobProtocol {
+    public var currentValue: Double {
+        let all = Array(EnumType.allCases)
+        let idx = all.firstIndex(of: currentSelection)!
+        return Double(idx)
+    }
+    
+    var allOptions: [EnumType] { Array(EnumType.allCases) }
 }

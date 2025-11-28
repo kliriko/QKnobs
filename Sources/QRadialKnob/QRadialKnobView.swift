@@ -6,14 +6,13 @@
 import SwiftUI
 
 public struct QRadialKnobView: View {
-
     @ObservedObject private var viewModel: QRadialKnobViewModel
 
     // Inject custom UI
     public var minView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
     public var maxView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
     public var valueView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
-    public var accessoryView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
+    public var snapButtonView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
 
     public init(viewModel: QRadialKnobViewModel = QRadialKnobViewModel()) {
         self.viewModel = viewModel
@@ -62,7 +61,7 @@ public struct QRadialKnobView: View {
                     if let minView { minView(bindable) }
                     if let maxView { maxView(bindable) }
                     if let valueView { valueView(bindable) }
-                    if let accessoryView { accessoryView(bindable) }
+                    if let snapButtonView { snapButtonView(bindable) }
                 }
                 .frame(width: geo.size.width, height: geo.size.height)
             }
@@ -77,7 +76,7 @@ public extension QRadialKnobView {
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content
     ) -> Self {
         var copy = self
-        copy.minView = { vm in AnyView(content(vm)) }
+        copy.minView = { viewModel in AnyView(content(viewModel)) }
         return copy
     }
 
@@ -85,7 +84,7 @@ public extension QRadialKnobView {
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content
     ) -> Self {
         var copy = self
-        copy.maxView = { vm in AnyView(content(vm)) }
+        copy.maxView = { viewModel in AnyView(content(viewModel)) }
         return copy
     }
 
@@ -93,7 +92,7 @@ public extension QRadialKnobView {
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content
     ) -> Self {
         var copy = self
-        copy.valueView = { vm in AnyView(content(vm)) }
+        copy.valueView = { viewModel in AnyView(content(viewModel)) }
         return copy
     }
 
@@ -101,7 +100,7 @@ public extension QRadialKnobView {
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content
     ) -> Self {
         var copy = self
-        copy.accessoryView = { vm in AnyView(content(vm)) }
+        copy.snapButtonView = { viewModel in AnyView(content(viewModel)) }
         return copy
     }
 }

@@ -45,7 +45,6 @@ public struct QFaderView: View {
     }
     
     // MARK: - Body
-    
     public var body: some View {
         GeometryReader { geo in
             ZStack {
