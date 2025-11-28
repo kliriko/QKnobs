@@ -18,7 +18,7 @@ public enum AmpSettingsExample: String, CaseIterable {
     case clean = "clean"
 }
 
-public final class QDiscreteKnobViewModel: ObservableObject, QDiscreteKnobProtocol {
+public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscreteKnobProtocol {
     public typealias EnumType = AmpSettingsExample
     @Published public var active: Bool = true
     @Published public var currentSelection: EnumType = .clean
@@ -37,7 +37,9 @@ public final class QDiscreteKnobViewModel: ObservableObject, QDiscreteKnobProtoc
     
     public func angle(for option: EnumType) -> Double {
         guard let index = index(of: option) else { return 0 }
-        return Double(index) * (360.0 / Double(allOptions.count))
+        let steps = Double(index)
+        let total = Double(allOptions.count)
+        return -steps * (360.0 / total)
     }
     
     public func handleDrag(gesture: DragGesture.Value) {
@@ -57,7 +59,7 @@ public final class QDiscreteKnobViewModel: ObservableObject, QDiscreteKnobProtoc
         let stepsMoved = Int((deltaY / stepThreshold).rounded())
         
         let count = allOptions.count
-        let newIndex = (startIdx - stepsMoved).positiveModulo(count)
+        let newIndex = (startIdx + stepsMoved).positiveModulo(count)
         
         currentSelection = allOptions[newIndex]
     }
