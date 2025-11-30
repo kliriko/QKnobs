@@ -79,7 +79,7 @@ public extension QDiscreteKnobView {
         _ content: @escaping (Bindable<QDiscreteKnobViewModel>, QDiscreteKnobViewModel.EnumType) -> Content
     ) -> Self {
         var copy = self
-        copy.labelView = { vm, option in AnyView(content(vm, option)) }
+        copy.labelView = { viewModel, option in AnyView(content(viewModel, option)) }
         return copy
     }
 }

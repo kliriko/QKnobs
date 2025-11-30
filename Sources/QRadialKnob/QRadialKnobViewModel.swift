@@ -82,6 +82,10 @@ public final class QRadialKnobViewModel: ObservableObject, Observable, QRadialKn
             currentValue = snapValue
         }
     }
+    
+    public func reset() {
+        setCurrentValue(defaultValue)
+    }
 }
 
 public extension Comparable {
