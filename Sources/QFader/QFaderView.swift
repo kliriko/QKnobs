@@ -10,6 +10,7 @@ import SwiftUI
 public struct QFaderView: View {
     // MARK: - Properties
     @ObservedObject var viewModel: QFaderViewModel
+    @Environment(\.faderStyle) private var style
     
     // TODO: REWORK
     private var accessory: ((QFaderViewModel) -> AnyView)?
@@ -47,63 +48,17 @@ public struct QFaderView: View {
     // MARK: - Body
     public var body: some View {
         GeometryReader { geo in
-            ZStack {
-                // Track line
-                Rectangle()
-                    .fill(Color.gray)
-                    .frame(width: 3)
-                    .frame(maxHeight: .infinity)
-                
-                // Snap indicator
-                let snapY = (1 - viewModel.snapValue) * (2 * viewModel.trackHeight) - viewModel.trackHeight
-                Rectangle()
-                    .fill(viewModel.snapEnabled ? Color.gray.opacity(0.5) : Color.gray.opacity(0.3))
-                    .frame(height: 2)
-                    .frame(maxWidth: .infinity)
-                    .offset(y: snapY)
-                    .allowsHitTesting(false)
-                
-                // Handle
-                Rectangle()
-                    .fill(Color.blue)
-                    .overlay(
-                        Rectangle()
-                            .fill(Color.white)
-                            .frame(width: max(viewModel.handleWidth - 8, 0), height: 2)
-                            .position(x: viewModel.handleWidth / 2, y: viewModel.handleHeight / 2)
-                    )
-                    .frame(width: viewModel.handleWidth, height: viewModel.handleHeight)
-                    .offset(y: viewModel.offsetY)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { viewModel.handleDragGesture(value: $0) }
-                            .onEnded { _ in viewModel.handleDragEnd() }
-                    )
-                    .simultaneousGesture(
-                        TapGesture(count: 2).onEnded { viewModel.returnToSnappingPoint() }
-                    )
-                    .animation(.easeInOut(duration: 0.2), value: viewModel.offsetY)
-                
-                if let minView = minView {
-                    minView(viewModel)
-                        .offset(y: viewModel.trackHeight)
-                }
-                
-                if let maxView = maxView {
-                    maxView(viewModel)
-                        .offset(y: -viewModel.trackHeight)
-                }
-                
-                if let snapBtn = snapButtonView {
-                    snapBtn(viewModel)
-                        .offset(y: snapY)
-                }
-            }
-            .overlay(alignment: accessoryAlignment) {
-                if let accessory = accessory {
-                    accessory(viewModel)
-                }
-            }
+            let drag = DragGesture()
+                .onChanged { viewModel.handleDragGesture(value: $0) }
+                .onEnded { _ in viewModel.handleDragEnd() }
+
+            style.makeBody(
+                configuration: QFaderStyleConfiguration(viewModel: viewModel, geometry: geo.size)
+            )
+            .gesture(drag)
+            .simultaneousGesture(
+                TapGesture(count: 2).onEnded { viewModel.returnToSnappingPoint() }
+            )
             .onChange(of: geo.size) { _, new in
                 viewModel.trackHeight = new.height / 2 - viewModel.handleHeight / 2
                 viewModel.returnToSnappingPoint()
