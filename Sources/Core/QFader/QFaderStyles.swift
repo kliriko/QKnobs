@@ -49,7 +49,6 @@ public extension View {
 }
 
 public struct QFaderStyles {
-
     // MARK: - BASIC
     public struct Basic: QFaderStyle, Sendable {
         public init() {}
@@ -67,9 +66,8 @@ public struct QFaderStyles {
 
                 // Snap indicator
                 Rectangle()
-                    .fill(viewModel.snapEnabled ? Color.gray.opacity(0.5) : Color.gray.opacity(0.3))
+                    .fill(viewModel.snapEnabled ? Color.gray : Color.gray.opacity(0.3))
                     .frame(height: 2)
-                    .frame(maxWidth: 20)
                     .offset(y: snapY)
                     .allowsHitTesting(false)
 

@@ -75,9 +75,29 @@ public struct QFaderView: View {
                 .onChanged { viewModel.handleDragGesture(value: $0) }
                 .onEnded { _ in viewModel.handleDragEnd() }
 
-            style.makeBody(
-                configuration: QFaderStyleConfiguration(viewModel: viewModel, geometry: geo.size)
-            )
+            ZStack {
+                style.makeBody(
+                    configuration: QFaderStyleConfiguration(viewModel: viewModel, geometry: geo.size)
+                )
+
+                if let minView {
+                    minView(viewModel)
+                }
+
+                if let maxView {
+                    maxView(viewModel)
+                }
+
+                if let accessory {
+                    accessory(viewModel)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: accessoryAlignment)
+                }
+
+                if let snapButtonView {
+                    snapButtonView(viewModel)
+                    
+                }
+            }
             .gesture(drag)
             .simultaneousGesture(
                 TapGesture(count: 2).onEnded { viewModel.returnToSnappingPoint() }
@@ -88,6 +108,7 @@ public struct QFaderView: View {
             }
         }
     }
+
 }
 
 // MARK: - View Modifiers

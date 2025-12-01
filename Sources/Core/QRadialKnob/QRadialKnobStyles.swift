@@ -62,7 +62,7 @@ public extension QRadialKnobStyles {
                     .shadow(radius: 4)
 
                 Rectangle()
-                    .fill(.secondary)
+                    .fill(viewModel.snapEnabled ? .gray : .gray.opacity(0.3))
                     .frame(width: configuration.geometry.width * 0.05, height: configuration.geometry.width * 0.2)
                     .offset(y: -configuration.geometry.height / 1.6)
                     .rotationEffect(.degrees(viewModel.defaultAngle))

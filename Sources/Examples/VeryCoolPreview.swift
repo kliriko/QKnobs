@@ -12,7 +12,6 @@ public struct VeryCoolPreview: View {
     public var body: some View {
         HStack {
             QAmplifierView()
-            Spacer()
         }
     }
 }
