@@ -8,16 +8,12 @@
 import SwiftUI
 
 public struct QDiscreteKnobView: View {
-    @ObservedObject var viewModel: QDiscreteKnobViewModel
+    @Environment(\.discreteKnobStyle) private var style
+    @ObservedObject var viewModel: QDiscreteKnobViewModel = QDiscreteKnobViewModel()
 
     public var labelView: ((Bindable<QDiscreteKnobViewModel>, QDiscreteKnobViewModel.EnumType) -> AnyView)?
 
-    @Environment(\.discreteKnobStyle)
-    private var style
-
-    public init(viewModel: QDiscreteKnobViewModel = QDiscreteKnobViewModel()) {
-        self.viewModel = viewModel
-    }
+    public init() {}
 
     public var body: some View {
         GeometryReader { geo in

@@ -11,16 +11,7 @@ import Combine
 /// ViewModel for the ``QFader``.
 /// Handles drag gestures, snapping logic, and maintains normalized position.
 public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol {
-    public init() { }
-    
-    @Published public var active: Bool = true
-    
-    public var feedbackEnabled: Bool = true
-    
-    // MARK: - Published variables
-    /// Moves the fader on UI.
-    @Published public var offsetY: CGFloat = 0
-    
+    // MARK: - Published fields
     /// Relative fader position.
     /// This is what tells us the fader's current value. Is in range 0...1.
     @Published public var currentValue: Double = 0.5
@@ -29,6 +20,34 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
     @Published public var snapEnabled: Bool = true
     
     @Published public var defaultValue: Double = 0.5
+    
+    /// Minimum value of the fader range
+    @Published public var minValue: Double = -48
+    
+    /// Maximum value of the fader range
+    @Published public var maxValue: Double = 6
+    
+    /// Fader's position to snap towards. Is in range 0...1.
+    @Published public var snapValue: Double = 0.5
+    
+    /// Moves the fader on UI.
+    @Published var offsetY: CGFloat = 0
+    
+    /// Threshold within which the snap occurs.
+    /// > Tip: If the snap value is 0.5 and threshold is 0.05,
+    /// > the snap will occur within range 0.45...0.55.
+    public var snapThreshold: Double = 0.05
+    
+    /// Offset before dragGesture.
+    private var lastOffsetY: CGFloat = 0.0
+    
+    /// Actual width of the fader rectangle.
+    var handleWidth: CGFloat = 30
+    
+    /// Actual height of the fader rectangle.
+    var handleHeight: CGFloat = 50
+    
+    var trackHeight: CGFloat = 100
     
     /// Absolute value based on min and max range
     public var absoluteValue: Double {
@@ -39,36 +58,27 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
             currentValue = ((newValue - minValue) / (maxValue - minValue)).clamped(to: 0...1)
         }
     }
-    // MARK: - Dimensions
     
-    /// Actual width of the fader rectangle.
-    var handleWidth: CGFloat = 30
+    // MARK: - Init
+    public init(minValue: Double = -48,
+                maxValue: Double = 6,
+                defaultValue: Double = 0) {
+        self.minValue = minValue
+        self.maxValue = maxValue
+        self.defaultValue = defaultValue
+    }
     
-    /// Actual height of the fader rectangle.
-    var handleHeight: CGFloat = 50
-    
-    public var trackHeight: CGFloat = 100
-    
-    // MARK: - Value Range
-    
-    /// Minimum value of the fader range
-    public let minValue: Double = -48
-    
-    /// Maximum value of the fader range
-    public let maxValue: Double = 6
-    
-    // MARK: - Private properties
-    
-    /// Offset before dragGesture.
-    private var lastOffsetY: CGFloat = 0.0
-    
-    /// Fader's position to snap towards. Is in range 0...1.
-    public let snapValue: Double = 0.5
-    
-    /// Threshold within which the snap occurs.
-    /// > Tip: If the snap value is 0.5 and threshold is 0.05,
-    /// > the snap will occur within range 0.45...0.55.
-    public var snapThreshold: Double = 0.05
+    public convenience init (minValue: Double = -48,
+                             maxValue: Double = 6,
+                             defaultValue: Double = 0,
+                             snapEnabled: Bool,
+                             snapValue: Double,
+                             snapThreshold: Double) {
+        self.init(minValue: minValue, maxValue: maxValue, defaultValue: defaultValue)
+        self.snapEnabled = snapEnabled
+        self.snapValue = snapValue
+        self.snapThreshold = snapThreshold
+    }
 
     // MARK: - Gesture Handlers
     /// Executes when drag occurs in ``QFader``.
@@ -102,8 +112,6 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
             // Convert normalized value back to offsetY
             offsetY = CGFloat((1 - 2 * snapValue) * trackHeight)
             lastOffsetY = offsetY
-            
-            feedbackEnabled.toggle()
         }
     }
     

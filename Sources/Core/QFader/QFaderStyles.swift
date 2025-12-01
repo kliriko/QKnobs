@@ -86,6 +86,7 @@ public struct QFaderStyles {
                     .offset(y: viewModel.offsetY)
                     .animation(.easeInOut(duration: 0.2), value: viewModel.offsetY)
             }
+            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
 

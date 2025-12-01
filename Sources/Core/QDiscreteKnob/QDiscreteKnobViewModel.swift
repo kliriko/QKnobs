@@ -20,20 +20,15 @@ public enum AmpSettingsExample: String, CaseIterable {
 
 public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscreteKnobProtocol {
     public typealias EnumType = AmpSettingsExample
-    @Published public var active: Bool = true
-    @Published public var currentSelection: EnumType = .clean
+    @Published public var currentSelection: EnumType = EnumType.allCases.first!
+    
+    public var allOptions: [EnumType] { EnumType.allCases }
     
     private var startDragY: CGFloat?
     private var startIndex: Int?
     private let stepThreshold: CGFloat = 10.0
     
-    public var allOptions: [EnumType] { EnumType.allCases }
-    
     public init() { }
-    
-    private func index(of option: EnumType) -> Int? {
-        return allOptions.firstIndex(of: option)
-    }
     
     public func angle(for option: EnumType) -> Double {
         guard let index = index(of: option) else { return 0 }
@@ -68,11 +63,8 @@ public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscre
         startDragY = nil
         startIndex = nil
     }
-}
-
-private extension Int {
-    func positiveModulo(_ modulus: Int) -> Int {
-        let mod = self % modulus
-        return mod >= 0 ? mod : mod + modulus
+    
+    private func index(of option: EnumType) -> Int? {
+        return allOptions.firstIndex(of: option)
     }
 }

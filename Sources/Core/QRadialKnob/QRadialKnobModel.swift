@@ -15,7 +15,6 @@ public protocol QContiniousControlProtocol: QControlProtocol {
     var snapEnabled: Bool { get set }
     var snapValue: Double { get }
     var snapThreshold: Double { get }
-    var feedbackEnabled: Bool { get }
     
     var absoluteValue: Double { get set }
 }

@@ -57,36 +57,34 @@ public extension View {
 }
 
 // MARK: - Style Namespace
-
 public struct QDiscreteKnobStyles {}
 
 public extension QDiscreteKnobStyles {
 
     // MARK: - BASIC
-
     struct Basic: QDiscreteKnobStyle, Sendable {
         public init() {}
 
         public func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> some View {
-            let vm = configuration.viewModel
+            let viewModel = configuration.viewModel
 
             ZStack {
                 Circle()
                     .fill(Color.gray.opacity(0.2))
 
-                ForEach(Array(vm.allOptions.enumerated()), id: \.offset) { _, option in
+                ForEach(Array(viewModel.allOptions.enumerated()), id: \.offset) { _, option in
                     Rectangle()
                         .fill(Color.gray.opacity(0.6))
                         .frame(width: 3, height: 10)
                         .offset(y: -configuration.geometry.height / 2.2)
-                        .rotationEffect(.degrees(vm.angle(for: option)))
+                        .rotationEffect(.degrees(viewModel.angle(for: option)))
                 }
 
                 Rectangle()
                     .fill(Color.accentColor)
                     .frame(width: 4, height: 30)
                     .offset(y: -configuration.geometry.height / 3.2)
-                    .rotationEffect(.degrees(-vm.angle(for: vm.currentSelection)))
+                    .rotationEffect(.degrees(-viewModel.angle(for: viewModel.currentSelection)))
 
                 Circle()
                     .fill(Color.accentColor)
@@ -101,7 +99,7 @@ public extension QDiscreteKnobStyles {
         public init() {}
 
         public func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> some View {
-            let vm = configuration.viewModel
+            let viewModel = configuration.viewModel
 
             ZStack {
                 Circle()
@@ -114,19 +112,19 @@ public extension QDiscreteKnobStyles {
                     .stroke(.white.opacity(0.3), lineWidth: 4)
                     .frame(width: configuration.geometry.width * 0.85)
 
-                ForEach(Array(vm.allOptions.enumerated()), id: \.offset) { _, option in
+                ForEach(Array(viewModel.allOptions.enumerated()), id: \.offset) { _, option in
                     Capsule()
                         .fill(.white.opacity(0.4))
                         .frame(width: 2, height: 12)
                         .offset(y: -configuration.geometry.height / 2.3)
-                        .rotationEffect(.degrees(vm.angle(for: option)))
+                        .rotationEffect(.degrees(viewModel.angle(for: option)))
                 }
 
                 Capsule()
                     .fill(.white)
                     .frame(width: 4, height: 36)
                     .offset(y: -configuration.geometry.height / 3.1)
-                    .rotationEffect(.degrees(-vm.angle(for: vm.currentSelection)))
+                    .rotationEffect(.degrees(-viewModel.angle(for: viewModel.currentSelection)))
 
                 Circle()
                     .fill(.white.opacity(0.8))
@@ -141,7 +139,7 @@ public extension QDiscreteKnobStyles {
         public init() {}
 
         public func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> some View {
-            let vm = configuration.viewModel
+            let viewModel = configuration.viewModel
 
             ZStack {
                 Circle()
@@ -159,19 +157,19 @@ public extension QDiscreteKnobStyles {
                     .stroke(.black.opacity(0.4), lineWidth: 3)
                     .frame(width: configuration.geometry.width * 0.85)
 
-                ForEach(Array(vm.allOptions.enumerated()), id: \.offset) { _, option in
+                ForEach(Array(viewModel.allOptions.enumerated()), id: \.offset) { _, option in
                     Rectangle()
                         .fill(.yellow.opacity(0.6))
                         .frame(width: 3, height: 12)
                         .offset(y: -configuration.geometry.height / 2.2)
-                        .rotationEffect(.degrees(vm.angle(for: option)))
+                        .rotationEffect(.degrees(viewModel.angle(for: option)))
                 }
 
                 Rectangle()
                     .fill(.yellow.opacity(0.9))
                     .frame(width: 4, height: 40)
                     .offset(y: -configuration.geometry.height / 3.2)
-                    .rotationEffect(.degrees(-vm.angle(for: vm.currentSelection)))
+                    .rotationEffect(.degrees(-viewModel.angle(for: viewModel.currentSelection)))
 
                 Circle()
                     .fill(.yellow.opacity(0.8))

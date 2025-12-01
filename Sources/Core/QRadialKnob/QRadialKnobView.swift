@@ -18,6 +18,22 @@ public struct QRadialKnobView: View {
     public init(viewModel: QRadialKnobViewModel = QRadialKnobViewModel()) {
         self.viewModel = viewModel
     }
+    
+    public init(minValue: Double = 0,
+                maxValue: Double = 11,
+                defaultValue: Double = 0.5) {
+        self.viewModel = QRadialKnobViewModel(minValue: minValue, maxValue: maxValue, defaultValue: defaultValue)
+    }
+    
+    public init (minValue: Double = 0,
+                 maxValue: Double = 11,
+                 defaultValue: Double = 0.5,
+                 snapEnabled: Bool,
+                 snapValue: Double,
+                 snapThreshold: Double) {
+        self.viewModel = QRadialKnobViewModel(minValue: minValue, maxValue: maxValue, defaultValue: defaultValue,
+                          snapEnabled: snapEnabled, snapValue: snapValue, snapThreshold: snapThreshold)
+    }
 
     public var body: some View {
         ZStack {
@@ -26,7 +42,6 @@ public struct QRadialKnobView: View {
                     .onChanged { viewModel.handleDrag(gesture: $0) }
                     .onEnded { _ in
                         viewModel.handleDragEnd()
-                        viewModel.startValue = nil
                     }
 
                 ZStack {
@@ -54,7 +69,6 @@ public struct QRadialKnobView: View {
 }
 
 // MARK: - Modifiers
-
 public extension QRadialKnobView {
     func knobMinView<Content: View>(
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content
@@ -91,4 +105,5 @@ public extension QRadialKnobView {
 
 #Preview {
     QRadialKnobView()
+        .frame(width: 50, height: 50)
 }

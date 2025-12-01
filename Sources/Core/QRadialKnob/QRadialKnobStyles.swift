@@ -63,8 +63,8 @@ public extension QRadialKnobStyles {
 
                 Rectangle()
                     .fill(.secondary)
-                    .frame(width: 3, height: 14)
-                    .offset(y: -configuration.geometry.height / 1.7)
+                    .frame(width: configuration.geometry.width * 0.05, height: configuration.geometry.width * 0.2)
+                    .offset(y: -configuration.geometry.height / 1.6)
                     .rotationEffect(.degrees(viewModel.defaultAngle))
 
                 Circle()
@@ -83,7 +83,7 @@ public extension QRadialKnobStyles {
     struct Modern: QRadialKnobStyle, Sendable {
         public init() {}
         public func makeBody(configuration: QRadialKnobStyleConfiguration) -> some View {
-            let vm = configuration.viewModel
+            let viewModel = configuration.viewModel
 
             ZStack {
                 Circle()
@@ -104,7 +104,7 @@ public extension QRadialKnobStyles {
                     .fill(.white.opacity(0.9))
                     .frame(width: configuration.geometry.width * 0.08)
                     .offset(y: -configuration.geometry.height / 4)
-                    .rotationEffect(.degrees(vm.angle))
+                    .rotationEffect(.degrees(viewModel.angle))
             }
         }
     }
@@ -112,7 +112,7 @@ public extension QRadialKnobStyles {
     struct Wood: QRadialKnobStyle, Sendable {
         public init() {}
         public func makeBody(configuration: QRadialKnobStyleConfiguration) -> some View {
-            let vm = configuration.viewModel
+            let viewModel = configuration.viewModel
 
             ZStack {
                 Circle()
@@ -134,7 +134,7 @@ public extension QRadialKnobStyles {
                     .fill(.yellow.opacity(0.7))
                     .frame(width: configuration.geometry.width * 0.1)
                     .offset(y: -configuration.geometry.height / 4)
-                    .rotationEffect(.degrees(vm.angle))
+                    .rotationEffect(.degrees(viewModel.angle))
             }
         }
     }
@@ -151,4 +151,3 @@ public extension QRadialKnobStyle where Self == QRadialKnobStyles.Modern {
 public extension QRadialKnobStyle where Self == QRadialKnobStyles.Wood {
     static var wood: QRadialKnobStyles.Wood { .init() }
 }
-

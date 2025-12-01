@@ -26,7 +26,7 @@ public final class QRadialKnobViewModel: ObservableObject, Observable, QRadialKn
     public var maxAngle: Double = 135
 
     // MARK: - Internal drag state
-    public var startValue: Double?
+    private var startValue: Double?
 
     // MARK: - Init
     public init(
@@ -39,6 +39,15 @@ public final class QRadialKnobViewModel: ObservableObject, Observable, QRadialKn
         self.defaultValue = defaultValue.clamped(to: 0...1)
         self.currentValue = defaultValue
         self.snapValue = defaultValue
+    }
+    
+    public convenience init (minValue: Double = 0, maxValue: Double = 11, defaultValue: Double = 0.5,
+                             snapEnabled: Bool, snapValue: Double, snapThreshold: Double) {
+        self.init(minValue: minValue, maxValue: maxValue, defaultValue: defaultValue)
+        
+        self.snapEnabled = snapEnabled
+        self.snapValue = snapValue
+        self.snapThreshold = snapThreshold
     }
 
     // MARK: - Helpers
@@ -81,15 +90,10 @@ public final class QRadialKnobViewModel: ObservableObject, Observable, QRadialKn
            abs(currentValue - snapValue) < snapThreshold {
             currentValue = snapValue
         }
+        startValue = nil
     }
     
     public func reset() {
         setCurrentValue(defaultValue)
-    }
-}
-
-public extension Comparable {
-    func clamped(to range: ClosedRange<Self>) -> Self {
-        min(max(self, range.lowerBound), range.upperBound)
     }
 }

@@ -21,12 +21,35 @@ public struct QFaderView: View {
     private var snapButtonView: ((QFaderViewModel) -> AnyView)?
     
     public init(viewModel: QFaderViewModel = QFaderViewModel()) {
-        self.viewModel = viewModel
         self.accessory = nil
         self.accessoryAlignment = .center
         self.minView = nil
         self.maxView = nil
         self.snapButtonView = nil
+        self.viewModel = viewModel
+    }
+    
+    public init (viewModel: QFaderViewModel = QFaderViewModel(),
+                 minValue: Double = -48,
+                 maxValue: Double = 6,
+                 defaultValue: Double = 0) {
+        self.init(viewModel: viewModel)
+        self.viewModel.minValue = minValue
+        self.viewModel.maxValue = maxValue
+        self.viewModel.defaultValue = defaultValue
+    }
+    
+    public init (viewModel: QFaderViewModel = QFaderViewModel(),
+                 minValue: Double = -48,
+                 maxValue: Double = 6,
+                 defaultValue: Double = 0,
+                 snapEnabled: Bool,
+                 snapValue: Double,
+                 snapThreshold: Double) {
+        self.init(viewModel: viewModel, minValue: minValue, maxValue: maxValue, defaultValue: defaultValue)
+        self.viewModel.snapEnabled = snapEnabled
+        self.viewModel.snapValue = snapValue
+        self.viewModel.snapThreshold = snapThreshold
     }
     
     private init(
@@ -121,4 +144,8 @@ public extension QFaderView {
             snapButtonView: { AnyView(content($0)) }
         )
     }
+}
+
+#Preview {
+    QFaderView()
 }
