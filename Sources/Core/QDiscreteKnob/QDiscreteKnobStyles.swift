@@ -8,21 +8,19 @@
 import SwiftUI
 import Foundation
 
-// MARK: - Protocol
-
+/// Protocol that required a view to have a body to count as a style
 public protocol QDiscreteKnobStyle {
     associatedtype Body: View
-    @ViewBuilder
-    func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> Body
+    @ViewBuilder func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> Body
 }
 
+/// Abstraction to link discrete knob view and custom style
 public struct QDiscreteKnobStyleConfiguration {
     public let viewModel: QDiscreteKnobViewModel
     public let geometry: CGSize
 }
 
-// MARK: - Type Eraser
-
+/// Used to enable different style usage
 public struct AnyQDiscreteKnobStyle: QDiscreteKnobStyle, @unchecked Sendable {
     private let _makeBody: @Sendable (QDiscreteKnobStyleConfiguration) -> AnyView
 
@@ -35,8 +33,7 @@ public struct AnyQDiscreteKnobStyle: QDiscreteKnobStyle, @unchecked Sendable {
     }
 }
 
-// MARK: - Environment Key
-
+/// Enables style usage as an environment variable
 private struct QDiscreteKnobStyleKey: EnvironmentKey {
     static let defaultValue = AnyQDiscreteKnobStyle(QDiscreteKnobStyles.Basic())
 }
@@ -48,7 +45,6 @@ public extension EnvironmentValues {
     }
 }
 
-// MARK: - View Modifier
 
 public extension View {
     func discreteKnobStyle<S: QDiscreteKnobStyle & Sendable>(_ style: S) -> some View {
@@ -56,12 +52,11 @@ public extension View {
     }
 }
 
-// MARK: - Style Namespace
+/// Stores all styles available for the knob
 public struct QDiscreteKnobStyles {}
 
 public extension QDiscreteKnobStyles {
-
-    // MARK: - BASIC
+    /// Default style of the control
     struct Basic: QDiscreteKnobStyle, Sendable {
         public init() {}
 
@@ -93,8 +88,7 @@ public extension QDiscreteKnobStyles {
         }
     }
 
-    // MARK: - MODERN
-
+    /// Modern style of the control
     struct Modern: QDiscreteKnobStyle, Sendable {
         public init() {}
 
@@ -132,9 +126,8 @@ public extension QDiscreteKnobStyles {
             }
         }
     }
-
-    // MARK: - WOOD
-
+    
+    /// 'Wooden' style of the control
     struct Wood: QDiscreteKnobStyle, Sendable {
         public init() {}
 

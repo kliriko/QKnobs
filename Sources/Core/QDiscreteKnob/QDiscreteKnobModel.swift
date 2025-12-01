@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// An abstraction for discrete knob's type
 public protocol QDiscreteKnobProtocol: QControlProtocol {
     associatedtype EnumType: CaseIterable, Equatable
     

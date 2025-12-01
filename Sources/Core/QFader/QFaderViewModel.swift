@@ -8,17 +8,17 @@
 import SwiftUI
 import Combine
 
-/// ViewModel for the ``QFader``.
-/// Handles drag gestures, snapping logic, and maintains normalized position.
+/// ViewModel for the ``QFader``
+/// Handles drag gestures, snapping logic, and maintains normalized position
 public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol {
-    // MARK: - Published fields
     /// Relative fader position.
-    /// This is what tells us the fader's current value. Is in range 0...1.
+    /// This is what tells us the fader's current value. Is in range 0...1
     @Published public var currentValue: Double = 0.5
     
-    /// Determines if fader should snap to its default position.
+    /// Determines if fader should snap to its default position
     @Published public var snapEnabled: Bool = true
     
+    /// Relative value for the fader initialization
     @Published public var defaultValue: Double = 0.5
     
     /// Minimum value of the fader range
@@ -27,26 +27,27 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
     /// Maximum value of the fader range
     @Published public var maxValue: Double = 6
     
-    /// Fader's position to snap towards. Is in range 0...1.
+    /// Fader's position to snap towards. Is in range 0...1
     @Published public var snapValue: Double = 0.5
     
     /// Moves the fader on UI.
     @Published var offsetY: CGFloat = 0
     
-    /// Threshold within which the snap occurs.
+    /// Threshold within which the snap occurs
     /// > Tip: If the snap value is 0.5 and threshold is 0.05,
-    /// > the snap will occur within range 0.45...0.55.
+    /// > the snap will occur within range 0.45...0.55
     public var snapThreshold: Double = 0.05
     
     /// Offset before dragGesture.
     private var lastOffsetY: CGFloat = 0.0
     
-    /// Actual width of the fader rectangle.
+    /// Actual width of the fader rectangle
     var handleWidth: CGFloat = 30
     
-    /// Actual height of the fader rectangle.
+    /// Actual height of the fader rectangle
     var handleHeight: CGFloat = 50
     
+    /// Height of the vertical line that appears to 'hold' the fader
     var trackHeight: CGFloat = 100
     
     /// Absolute value based on min and max range
@@ -59,7 +60,7 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
         }
     }
     
-    // MARK: - Init
+    /// Initializes ``QFaderView`` with min, max and default values
     public init(minValue: Double = -48,
                 maxValue: Double = 6,
                 defaultValue: Double = 0) {
@@ -68,6 +69,7 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
         self.defaultValue = defaultValue
     }
     
+    /// Initialized ``QFaderView`` with min, max and default values and snapping params
     public convenience init (minValue: Double = -48,
                              maxValue: Double = 6,
                              defaultValue: Double = 0,
@@ -80,7 +82,6 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
         self.snapThreshold = snapThreshold
     }
 
-    // MARK: - Gesture Handlers
     /// Executes when drag occurs in ``QFader``.
     /// - Parameters:
     ///   - currentValue: Return of `DragGesture`.
@@ -115,7 +116,7 @@ public final class QFaderViewModel: ObservableObject, QContiniousControlProtocol
         }
     }
     
-    /// Toggles snapping on or off.
+    /// Toggles snapping
     public func toggleSnapping() {
         snapEnabled.toggle()
     }

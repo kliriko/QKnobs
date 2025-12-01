@@ -8,28 +8,23 @@
 import Foundation
 import SwiftUI
 
-public enum AmpSettingsExample: String, CaseIterable {
-    case delay = "delay"
-    case reverb = "reverb"
-    case delayreverb = "delay+reverb"
-    case chorus = "chorus"
-    case blade = "blade"
-    case fuzz = "fuzz"
-    case clean = "clean"
-}
-
+/// Implements logic of ``QDiscreteKnobView``
 public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscreteKnobProtocol {
     public typealias EnumType = AmpSettingsExample
     @Published public var currentSelection: EnumType = EnumType.allCases.first!
     
     public var allOptions: [EnumType] { EnumType.allCases }
     
+    /// Y-axis offset in the beginning of the drag. Used to calculate the difference in position
     private var startDragY: CGFloat?
+    /// Index of the element in the beginning of the drag. Used to calculate the difference in position
     private var startIndex: Int?
+    /// Difference in drag to switch to another option
     private let stepThreshold: CGFloat = 10.0
     
     public init() { }
     
+    /// Calculates an angle needed to create even space on the options circle
     public func angle(for option: EnumType) -> Double {
         guard let index = index(of: option) else { return 0 }
         let steps = Double(index)
@@ -37,6 +32,7 @@ public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscre
         return -steps * (360.0 / total)
     }
     
+    /// Selection logic
     public func handleDrag(gesture: DragGesture.Value) {
         if startDragY == nil {
             startDragY = gesture.startLocation.y
@@ -59,11 +55,13 @@ public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscre
         currentSelection = allOptions[newIndex]
     }
     
+    /// Resets data from previous calculation.
     public func handleDragEnd() {
         startDragY = nil
         startIndex = nil
     }
     
+    /// Helper method to get an index in the actual options array.
     private func index(of option: EnumType) -> Int? {
         return allOptions.firstIndex(of: option)
     }

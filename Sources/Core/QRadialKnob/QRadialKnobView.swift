@@ -5,6 +5,8 @@
 
 import SwiftUI
 
+/// View that allows precise control of the value in form of a knob.
+/// Has min and max values. Supports snapping logic
 public struct QRadialKnobView: View {
     @Environment(\.radialKnobStyle) private var style
     @ObservedObject private var viewModel: QRadialKnobViewModel
@@ -15,16 +17,19 @@ public struct QRadialKnobView: View {
     public var valueView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
     public var snapButtonView: ((Bindable<QRadialKnobViewModel>) -> AnyView)?
 
+    /// Initializes ``QRadialKnobView`` with basic parameters
     public init(viewModel: QRadialKnobViewModel = QRadialKnobViewModel()) {
         self.viewModel = viewModel
     }
     
+    /// Initializes ``QRadialKnobView`` with custom min, max and default values
     public init(minValue: Double = 0,
                 maxValue: Double = 11,
                 defaultValue: Double = 0.5) {
         self.viewModel = QRadialKnobViewModel(minValue: minValue, maxValue: maxValue, defaultValue: defaultValue)
     }
     
+    /// Initializes ``QRadialKnobView`` with custom min, max and snap parameters
     public init (minValue: Double = 0,
                  maxValue: Double = 11,
                  defaultValue: Double = 0.5,
@@ -68,7 +73,7 @@ public struct QRadialKnobView: View {
     }
 }
 
-// MARK: - Modifiers
+/// Enavbles view modifiers for the ``QRadialKnobView``
 public extension QRadialKnobView {
     func knobMinView<Content: View>(
         _ content: @escaping (Bindable<QRadialKnobViewModel>) -> Content

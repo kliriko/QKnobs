@@ -7,8 +7,9 @@
 
 import SwiftUI
 
+/// Fader that mimic ones found on the mixer. Basically a vertical slider with tweakable
+/// min and max values. Supports snapping at a desired position
 public struct QFaderView: View {
-    // MARK: - Properties
     @ObservedObject var viewModel: QFaderViewModel
     @Environment(\.faderStyle) private var style
     
@@ -20,6 +21,7 @@ public struct QFaderView: View {
     private var maxView: ((QFaderViewModel) -> AnyView)?
     private var snapButtonView: ((QFaderViewModel) -> AnyView)?
     
+    /// Creates a Fader with basic parameters
     public init(viewModel: QFaderViewModel = QFaderViewModel()) {
         self.accessory = nil
         self.accessoryAlignment = .center
@@ -29,6 +31,7 @@ public struct QFaderView: View {
         self.viewModel = viewModel
     }
     
+    /// Creates a fader with the abiity to set min, max and default values
     public init (viewModel: QFaderViewModel = QFaderViewModel(),
                  minValue: Double = -48,
                  maxValue: Double = 6,
@@ -38,7 +41,7 @@ public struct QFaderView: View {
         self.viewModel.maxValue = maxValue
         self.viewModel.defaultValue = defaultValue
     }
-    
+    /// Creates fader with the ability to modify min, max, default values and snap params
     public init (viewModel: QFaderViewModel = QFaderViewModel(),
                  minValue: Double = -48,
                  maxValue: Double = 6,
@@ -52,6 +55,7 @@ public struct QFaderView: View {
         self.viewModel.snapThreshold = snapThreshold
     }
     
+    /// Initializes view modifiers for the ``QFaderView``
     private init(
         viewModel: QFaderViewModel,
         accessory: ((QFaderViewModel) -> AnyView)?,
@@ -68,7 +72,6 @@ public struct QFaderView: View {
         self.snapButtonView = snapButtonView
     }
     
-    // MARK: - Body
     public var body: some View {
         GeometryReader { geo in
             let drag = DragGesture()
@@ -111,7 +114,6 @@ public struct QFaderView: View {
 
 }
 
-// MARK: - View Modifiers
 public extension QFaderView {
     func accessoryView<Content: View>(
         alignment: Alignment = .center,

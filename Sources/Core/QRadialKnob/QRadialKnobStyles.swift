@@ -8,18 +8,19 @@
 import Foundation
 import SwiftUI
 
+/// Protocol that requires view to have a body to count as a style
 public protocol QRadialKnobStyle {
     associatedtype Body: View
-
-    @ViewBuilder
-    func makeBody(configuration: QRadialKnobStyleConfiguration) -> Body
+    @ViewBuilder func makeBody(configuration: QRadialKnobStyleConfiguration) -> Body
 }
 
+/// Abstraction to link discrete RadialKnob view and custom style
 public struct QRadialKnobStyleConfiguration {
     public let viewModel: QRadialKnobViewModel
     public let geometry: CGSize
 }
 
+/// Used to enable different style usage
 public struct AnyQRadialKnobStyle: QRadialKnobStyle, @unchecked Sendable {
     private let _makeBody: @Sendable (QRadialKnobStyleConfiguration) -> AnyView
 
@@ -32,6 +33,7 @@ public struct AnyQRadialKnobStyle: QRadialKnobStyle, @unchecked Sendable {
     }
 }
 
+/// Enables style usage as an environment variable
 private struct QRadialKnobStyleKey: EnvironmentKey {
     static let defaultValue = AnyQRadialKnobStyle(.basic)
 }
@@ -51,6 +53,7 @@ public extension View {
 
 public struct QRadialKnobStyles {}
 
+/// Default style of the control
 public extension QRadialKnobStyles {
     public struct Basic: QRadialKnobStyle, Sendable {
         public init() {}
@@ -80,6 +83,7 @@ public extension QRadialKnobStyles {
         }
     }
 
+    /// Modern style of the control
     struct Modern: QRadialKnobStyle, Sendable {
         public init() {}
         public func makeBody(configuration: QRadialKnobStyleConfiguration) -> some View {
@@ -109,6 +113,7 @@ public extension QRadialKnobStyles {
         }
     }
 
+    /// 'Wooden' style of the control
     struct Wood: QRadialKnobStyle, Sendable {
         public init() {}
         public func makeBody(configuration: QRadialKnobStyleConfiguration) -> some View {

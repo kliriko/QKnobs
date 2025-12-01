@@ -8,17 +8,19 @@
 import Foundation
 import SwiftUI
 
+/// Protocol that requires view to have a body to count as a style
 public protocol QFaderStyle {
     associatedtype Body: View
-    @ViewBuilder
-    func makeBody(configuration: QFaderStyleConfiguration) -> Body
+    @ViewBuilder func makeBody(configuration: QFaderStyleConfiguration) -> Body
 }
 
+/// Abstraction to link discrete Fader view and custom style
 public struct QFaderStyleConfiguration {
     public let viewModel: QFaderViewModel
     public let geometry: CGSize
 }
 
+/// Used to enable different style usage
 public struct AnyQFaderStyle: QFaderStyle, @unchecked Sendable {
     private let _makeBody: @Sendable (QFaderStyleConfiguration) -> AnyView
 
@@ -31,6 +33,7 @@ public struct AnyQFaderStyle: QFaderStyle, @unchecked Sendable {
     }
 }
 
+/// Enables style usage as an environment variable
 private struct QFaderStyleKey: EnvironmentKey {
     static let defaultValue = AnyQFaderStyle(QFaderStyles.Basic())
 }
@@ -49,7 +52,7 @@ public extension View {
 }
 
 public struct QFaderStyles {
-    // MARK: - BASIC
+    /// Default style of the control
     public struct Basic: QFaderStyle, Sendable {
         public init() {}
 
@@ -88,7 +91,7 @@ public struct QFaderStyles {
         }
     }
 
-    // MARK: - MODERN
+    /// Modern style of the control
     public struct Modern: QFaderStyle, Sendable {
         public init() {}
 
@@ -132,7 +135,7 @@ public struct QFaderStyles {
         }
     }
 
-    // MARK: - WOOD
+    /// 'Wooden' style of the control
     public struct Wood: QFaderStyle, Sendable {
         public init() {}
 

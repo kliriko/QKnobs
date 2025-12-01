@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Set of requirements for the continious control
 public protocol QContiniousControlProtocol: QControlProtocol {
     var defaultValue: Double { get }
     var minValue: Double { get }
@@ -19,19 +20,10 @@ public protocol QContiniousControlProtocol: QControlProtocol {
     var absoluteValue: Double { get set }
 }
 
+/// Set of requirements for the radial knob
 public protocol QRadialKnobProtocol: QContiniousControlProtocol {
     var minAngle: Double { get }
     var maxAngle: Double { get }
     var angle: Double { get }
     var defaultAngle: Double { get }
-}
-
-extension QRadialKnobProtocol {
-    public var angle: Double {
-        minAngle + (maxAngle - minAngle) * ((currentValue - minValue) / (maxValue - minValue))
-    }
-    
-    public var defaultAngle: Double {
-        minAngle + (maxAngle - minAngle) * ((defaultValue - minValue) / (maxValue - minValue))
-    }
 }

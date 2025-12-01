@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Shows off framework's main controls such as radial knob and fader
 public struct QMixerChannelView: View {
     @StateObject var viewModel = QMixerChannelViewModel()
     

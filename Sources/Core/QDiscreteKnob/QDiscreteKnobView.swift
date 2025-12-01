@@ -7,10 +7,12 @@
 
 import SwiftUI
 
+/// Knob that allows to switch through the set of options
 public struct QDiscreteKnobView: View {
     @Environment(\.discreteKnobStyle) private var style
     @ObservedObject var viewModel: QDiscreteKnobViewModel = QDiscreteKnobViewModel()
 
+    /// Exposed variable that allows customization of knob's labels
     public var labelView: ((Bindable<QDiscreteKnobViewModel>, QDiscreteKnobViewModel.EnumType) -> AnyView)?
 
     public init() {}

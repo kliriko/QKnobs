@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Shows off framework's main controls such as radial knob, discrete knob and a fader
 public struct QAmplifierView: View {
     @StateObject var viewModel = QAmplifierViewModel()
     
