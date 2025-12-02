@@ -23,15 +23,48 @@ public struct QDiscreteKnobView: View {
                 .onChanged { viewModel.handleDrag(gesture: $0) }
                 .onEnded { _ in viewModel.handleDragEnd() }
 
-            style.makeBody(
-                configuration: QDiscreteKnobStyleConfiguration(
-                    viewModel: viewModel,
-                    geometry: geo.size
+            ZStack {
+                style.makeBody(
+                    configuration: QDiscreteKnobStyleConfiguration(
+                        viewModel: viewModel,
+                        geometry: geo.size
+                    )
                 )
-            )
-            .gesture(drag)
+                .gesture(drag)
+                
+                if let labelView {
+                    let bindable = Bindable(viewModel)
+
+                    ForEach(viewModel.allOptions, id: \.self) { option in
+                        labelView(bindable, option)
+                            .position(
+                                position(
+                                    for: option,
+                                    radius: min(geo.size.width, geo.size.height) / 2,
+                                    in: geo.size
+                                )
+                            )
+                    }
+                }
+            }
         }
     }
+    
+    private func position(
+        for option: QDiscreteKnobViewModel.EnumType,
+        radius: CGFloat,
+        in size: CGSize
+    ) -> CGPoint {
+        let angle = viewModel.angle(for: option) * .pi / 180
+
+        let rad = radius * 0.7
+
+        let xOffset = size.width / 2  + cos(angle) * rad
+        let yOffset = size.height / 2 + sin(angle) * rad
+
+        return CGPoint(x: xOffset, y: yOffset)
+    }
+
 }
 
 public extension QDiscreteKnobView {

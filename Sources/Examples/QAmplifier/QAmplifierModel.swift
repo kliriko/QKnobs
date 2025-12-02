@@ -19,11 +19,8 @@ struct QAmplifierSettings: Equatable {
 
 /// Options for the style knob on the amp
 public enum AmpSettingsExample: String, CaseIterable {
-    case delay = "delay"
-    case reverb = "reverb"
-    case delayreverb = "delay+reverb"
-    case chorus = "chorus"
-    case blade = "blade"
-    case fuzz = "fuzz"
-    case clean = "clean"
+    case delay
+    case reverb
+    case chorus
+    case fuzz 
 }

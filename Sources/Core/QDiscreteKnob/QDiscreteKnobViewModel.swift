@@ -27,31 +27,31 @@ public final class QDiscreteKnobViewModel: ObservableObject, Observable, QDiscre
     /// Calculates an angle needed to create even space on the options circle
     public func angle(for option: EnumType) -> Double {
         guard let index = index(of: option) else { return 0 }
-        let steps = Double(index)
-        let total = Double(allOptions.count)
-        return -steps * (360.0 / total)
+        let stepAngle = 360.0 / Double(allOptions.count)
+        return -Double(index) * stepAngle
     }
     
     /// Selection logic
     public func handleDrag(gesture: DragGesture.Value) {
+        print("HANDLE DRAG CALLED: \(gesture.location)")
         if startDragY == nil {
             startDragY = gesture.startLocation.y
             startIndex = index(of: currentSelection)
             return
         }
-        
+
         guard let startY = startDragY,
               let startIdx = startIndex,
               !allOptions.isEmpty else {
             return
         }
-        
+
         let deltaY = gesture.location.y - startY
-        let stepsMoved = Int((deltaY / stepThreshold).rounded())
-        
+        let stepsMoved = Int((deltaY / stepThreshold ).rounded())
+
         let count = allOptions.count
-        let newIndex = (startIdx + stepsMoved).positiveModulo(count)
-        
+        let newIndex = (startIdx - stepsMoved).positiveModulo(count)
+       
         currentSelection = allOptions[newIndex]
     }
     

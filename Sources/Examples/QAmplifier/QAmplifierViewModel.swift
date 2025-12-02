@@ -12,11 +12,11 @@ import Combine
 public class QAmplifierViewModel: ObservableObject {
     @Published var ampSettings: QAmplifierSettings = QAmplifierSettings()
 
-    let gain = QRadialKnobViewModel()
-    let bass = QRadialKnobViewModel()
-    let mid = QRadialKnobViewModel()
-    let treble = QRadialKnobViewModel()
-    let presence = QRadialKnobViewModel()
+    let gain = QRadialKnobViewModel(minValue: 0, maxValue: 10, defaultValue: 0.4)
+    let bass = QRadialKnobViewModel(minValue: 0, maxValue: 10, defaultValue: 0.7)
+    let mid = QRadialKnobViewModel(minValue: 0, maxValue: 10, defaultValue: 0.4)
+    let treble = QRadialKnobViewModel(minValue: 0, maxValue: 10, defaultValue: 0.6)
+    let presence = QRadialKnobViewModel(minValue: 0, maxValue: 10, defaultValue: 0.4)
     let volume = QFaderViewModel()
 
     private var cancellables = Set<AnyCancellable>()

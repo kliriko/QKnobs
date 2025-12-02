@@ -15,105 +15,122 @@ public struct QAmplifierView: View {
 
     public var body: some View {
         HStack(spacing: 50) {
-            VStack {
-                QRadialKnobView(viewModel: viewModel.gain)
-                    .knobValueView { viewModel in
-                        HStack {
-                            Text("gain: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
-                            Button(action: {
-                                viewModel.snapEnabled.wrappedValue.toggle()
-                            }, label: {
-                                Image(systemName: "link")
-                            })
-                            .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
-                        }
-                        .offset(x: 0, y: 85)
-                    }
-                    .knobMaxView { viewModel in
-                        Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: 65, y: 40)
-                    }
-                    .knobMinView { viewModel in
-                        Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: -65, y: 40)
-                    }
-                    .frame(width: 120, height: 120)
-            }
+            QDiscreteKnobView()
+                .knobLabel { bindable, option in
+                    Text(option.rawValue.uppercased())
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .foregroundStyle(bindable.wrappedValue.currentSelection == option ? .yellow : .white.opacity(0.7))
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(Color.black.opacity(0.6))
+                                .opacity(bindable.wrappedValue.currentSelection == option ? 1 : 0)
+                        )
+                        .offset(y: -38)
+                        .rotationEffect(.degrees(bindable.wrappedValue.angle(for: option)))
+                        .rotationEffect(.degrees(90))
+                        .scaleEffect(bindable.wrappedValue.currentSelection == option ? 1.15 : 1.0)
+                        .animation(.easeOut(duration: 0.2), value: bindable.wrappedValue.currentSelection)
+                }
+                .discreteKnobStyle(.basic)
+                .frame(width: 120, height: 120)
             
-            VStack {
-                QRadialKnobView(viewModel: viewModel.bass)
-                    .knobValueView { viewModel in
-                        HStack {
-                            Text("bass: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
-                            Button(action: {
-                                viewModel.snapEnabled.wrappedValue.toggle()
-                            }, label: {
-                                Image(systemName: "link")
-                            })
-                            .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
-                        }
-                        .offset(x: 0, y: 85)
+            QRadialKnobView(viewModel: viewModel.gain)
+                .knobValueView { viewModel in
+                    HStack {
+                        Text("gain: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
+                        Button(action: {
+                            viewModel.snapEnabled.wrappedValue.toggle()
+                        }, label: {
+                            Image(systemName: "link")
+                        })
+                        .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
                     }
-                    .knobMaxView { viewModel in
-                        Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: 65, y: 40)
-                    }
-                    .knobMinView { viewModel in
-                        Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: -65, y: 40)
-                    }
-                    .frame(width: 120, height: 120)
-            }
+                    .offset(x: 0, y: 85)
+                }
+                .knobMaxView { viewModel in
+                    Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: 65, y: 40)
+                }
+                .knobMinView { viewModel in
+                    Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: -65, y: 40)
+                }
+                .frame(width: 120, height: 120)
             
-            VStack {
-                QRadialKnobView(viewModel: viewModel.mid)
-                    .knobValueView { viewModel in
-                        HStack {
-                            Text("mid: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
-                            Button(action: {
-                                viewModel.snapEnabled.wrappedValue.toggle()
-                            }, label: {
-                                Image(systemName: "link")
-                            })
-                            .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
-                        }
-                        .offset(x: 0, y: 85)
+            QRadialKnobView(viewModel: viewModel.bass)
+                .knobValueView { viewModel in
+                    HStack {
+                        Text("bass: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
+                        Button(action: {
+                            viewModel.snapEnabled.wrappedValue.toggle()
+                        }, label: {
+                            Image(systemName: "link")
+                        })
+                        .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
                     }
-                    .knobMaxView { viewModel in
-                        Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: 65, y: 40)
-                    }
-                    .knobMinView { viewModel in
-                        Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: -65, y: 40)
-                    }
-                    .frame(width: 120, height: 120)
-            }
+                    .offset(x: 0, y: 85)
+                }
+                .knobMaxView { viewModel in
+                    Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: 65, y: 40)
+                }
+                .knobMinView { viewModel in
+                    Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: -65, y: 40)
+                }
+                .frame(width: 120, height: 120)
             
-            VStack {
-                QRadialKnobView(viewModel: viewModel.treble)
-                    .knobValueView { viewModel in
-                        HStack {
-                            Text("treble: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
-                            Button(action: {
-                                viewModel.snapEnabled.wrappedValue.toggle()
-                            }, label: {
-                                Image(systemName: "link")
-                            })
-                            .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
-                        }
-                        .offset(x: 0, y: 85)
+            
+            
+            QRadialKnobView(viewModel: viewModel.mid)
+                .knobValueView { viewModel in
+                    HStack {
+                        Text("mid: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
+                        Button(action: {
+                            viewModel.snapEnabled.wrappedValue.toggle()
+                        }, label: {
+                            Image(systemName: "link")
+                        })
+                        .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
                     }
-                    .knobMaxView { viewModel in
-                        Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: 65, y: 40)
+                    .offset(x: 0, y: 85)
+                }
+                .knobMaxView { viewModel in
+                    Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: 65, y: 40)
+                }
+                .knobMinView { viewModel in
+                    Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: -65, y: 40)
+                }
+                .frame(width: 120, height: 120)
+            
+            
+            QRadialKnobView(viewModel: viewModel.treble)
+                .knobValueView { viewModel in
+                    HStack {
+                        Text("treble: \(viewModel.absoluteValue.wrappedValue, specifier: "%.1f")")
+                        Button(action: {
+                            viewModel.snapEnabled.wrappedValue.toggle()
+                        }, label: {
+                            Image(systemName: "link")
+                        })
+                        .tint(viewModel.wrappedValue.snapEnabled ? .green : .gray)
                     }
-                    .knobMinView { viewModel in
-                        Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
-                            .offset(x: -65, y: 40)
-                    }
-                    .frame(width: 120, height: 120)
-            }
+                    .offset(x: 0, y: 85)
+                }
+                .knobMaxView { viewModel in
+                    Text("\(viewModel.maxValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: 65, y: 40)
+                }
+                .knobMinView { viewModel in
+                    Text("\(viewModel.minValue.wrappedValue, specifier: "%.1f")")
+                        .offset(x: -65, y: 40)
+                }
+                .frame(width: 120, height: 120)
+            
             
             VStack {
                 QFaderView(viewModel: viewModel.volume)

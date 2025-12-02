@@ -79,7 +79,7 @@ public extension QDiscreteKnobStyles {
                     .fill(Color.accentColor)
                     .frame(width: 4, height: 30)
                     .offset(y: -configuration.geometry.height / 3.2)
-                    .rotationEffect(.degrees(-viewModel.angle(for: viewModel.currentSelection)))
+                    .rotationEffect(.degrees(viewModel.angle(for: viewModel.currentSelection) + Double((360 / viewModel.allOptions.count))))
 
                 Circle()
                     .fill(Color.accentColor)
@@ -89,84 +89,107 @@ public extension QDiscreteKnobStyles {
     }
 
     /// Modern style of the control
+    /// Modern style — sleek black metal look
     struct Modern: QDiscreteKnobStyle, Sendable {
         public init() {}
 
         public func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> some View {
             let viewModel = configuration.viewModel
+            let size = configuration.geometry
 
             ZStack {
+                // Main body
                 Circle()
-                    .fill(
-                        LinearGradient(colors: [.black, .gray], startPoint: .top, endPoint: .bottom)
-                    )
-                    .shadow(radius: 6)
+                    .fill(LinearGradient(colors: [.black, .gray.opacity(0.8)], startPoint: .top, endPoint: .bottom))
+                    .shadow(color: .black.opacity(0.6), radius: 10, x: 0, y: 5)
 
+                // Outer rim highlight
                 Circle()
-                    .stroke(.white.opacity(0.3), lineWidth: 4)
-                    .frame(width: configuration.geometry.width * 0.85)
+                    .strokeBorder(LinearGradient(colors: [.white.opacity(0.4), .clear], startPoint: .top, endPoint: .bottom), lineWidth: 4)
+                    .frame(width: size.width * 0.92)
 
-                ForEach(Array(viewModel.allOptions.enumerated()), id: \.offset) { _, option in
+                // Tick marks
+                ForEach(viewModel.allOptions, id: \.self) { option in
                     Capsule()
-                        .fill(.white.opacity(0.4))
-                        .frame(width: 2, height: 12)
-                        .offset(y: -configuration.geometry.height / 2.3)
+                        .fill(Color.white.opacity(0.5))
+                        .frame(width: 3, height: 14)
+                        .offset(y: -size.height / 2.25)
                         .rotationEffect(.degrees(viewModel.angle(for: option)))
                 }
 
+                // Main indicator (pointer) — THIS WAS THE FIX
                 Capsule()
-                    .fill(.white)
-                    .frame(width: 4, height: 36)
-                    .offset(y: -configuration.geometry.height / 3.1)
-                    .rotationEffect(.degrees(-viewModel.angle(for: viewModel.currentSelection)))
+                    .fill(Color.white)
+                    .frame(width: 5, height: 42)
+                    .offset(y: -size.height / 3.0)
+                    //.rotationEffect(.degrees(viewModel.angle(for: viewModel.currentSelection)))
+                    .rotationEffect(.degrees(viewModel.angle(for: viewModel.currentSelection) + Double((360 / viewModel.allOptions.count))))
+                    .shadow(radius: 3)
 
+                // Center cap
                 Circle()
-                    .fill(.white.opacity(0.8))
-                    .frame(width: 22)
+                    .fill(RadialGradient(colors: [.white, .white.opacity(0.6)], center: .center, startRadius: 2, endRadius: 12))
+                    .frame(width: 26)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black.opacity(0.3), lineWidth: 2)
+                            .frame(width: 26)
+                    )
+                    .shadow(radius: 4)
             }
         }
     }
-    
-    /// 'Wooden' style of the control
+
+    /// Wood style — vintage amp knob feel
     struct Wood: QDiscreteKnobStyle, Sendable {
         public init() {}
 
         public func makeBody(configuration: QDiscreteKnobStyleConfiguration) -> some View {
             let viewModel = configuration.viewModel
+            let size = configuration.geometry
 
             ZStack {
+                // Wooden body
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.brown, .black],
+                            colors: [Color(white: 0.45), Color(white: 0.25), .black],
                             center: .center,
-                            startRadius: 6,
-                            endRadius: configuration.geometry.width * 0.5
+                            startRadius: 5,
+                            endRadius: size.width / 2
                         )
                     )
-                    .shadow(radius: 6)
+                    .overlay(
+                        Circle()
+                            .stroke(Color(white: 0.3), lineWidth: 3)
+                            .frame(width: size.width * 0.88)
+                    )
+                    .shadow(color: .black.opacity(0.7), radius: 8, x: 0, y: 4)
 
-                Circle()
-                    .stroke(.black.opacity(0.4), lineWidth: 3)
-                    .frame(width: configuration.geometry.width * 0.85)
-
-                ForEach(Array(viewModel.allOptions.enumerated()), id: \.offset) { _, option in
+                // Wood grain ticks
+                ForEach(viewModel.allOptions, id: \.self) { option in
                     Rectangle()
-                        .fill(.yellow.opacity(0.6))
-                        .frame(width: 3, height: 12)
-                        .offset(y: -configuration.geometry.height / 2.2)
+                        .fill(Color.orange.opacity(0.7))
+                        .frame(width: 4, height: 16)
+                        .offset(y: -size.height / 2.2)
                         .rotationEffect(.degrees(viewModel.angle(for: option)))
                 }
 
+                // Golden pointer — THIS WAS THE FIX
                 Rectangle()
-                    .fill(.yellow.opacity(0.9))
-                    .frame(width: 4, height: 40)
-                    .offset(y: -configuration.geometry.height / 3.2)
-                    .rotationEffect(.degrees(-viewModel.angle(for: viewModel.currentSelection)))
+                    .fill(LinearGradient(colors: [.yellow, .orange], startPoint: .top, endPoint: .bottom))
+                    .frame(width: 6, height: 48)
+                    .cornerRadius(3)
+                    .offset(y: -size.height / 3.1)
+                    .rotationEffect(.degrees(viewModel.angle(for: viewModel.currentSelection))) // ← REMOVED the extra "-"
+                    .shadow(radius: 2)
 
+                // Center rivet
                 Circle()
-                    .fill(.yellow.opacity(0.8))
-                    .frame(width: 24)
+                    .fill(RadialGradient(colors: [.yellow.opacity(0.9), .orange], center: .center, startRadius: 3, endRadius: 14))
+                    .frame(width: 28)
+                    .overlay(Circle().stroke(Color.black.opacity(0.4), lineWidth: 2))
+                    .shadow(color: .black.opacity(0.5), radius: 3)
             }
         }
     }
